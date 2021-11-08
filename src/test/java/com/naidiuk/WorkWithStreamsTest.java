@@ -8,10 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class WorkWithStreamsTest {
 
-    private final Path path = Path.of("src\\Test.txt");
-
     @Test
     void testCountTheNumberOfChars() {
+        //Prepare
+        Path path = Path.of("src\\Test.txt");
+
         //When
         int counter = WorkWithStreams.countTheNumberOfChars(path);
 
@@ -21,6 +22,9 @@ class WorkWithStreamsTest {
 
     @Test
     void testCountTheWords() {
+        //Prepare
+        Path path = Path.of("src\\Test.txt");
+
         //When
         int counter = WorkWithStreams.countTheWords(path);
 
@@ -30,24 +34,27 @@ class WorkWithStreamsTest {
 
     @Test
     void testCountTheSentences() {
+        //Prepare
+        Path path = Path.of("src\\План - капкан.txt");
+
         //When
         int counter = WorkWithStreams.countTheSentences(path);
 
         //Then
-        assertEquals(3, counter);
+        assertEquals(12, counter);
     }
 
     @Test
     void testCopyImage() {
         //Prepare
         Path pathToImage = Path.of("src\\LWlRSlZDWoE.jpg");
-        Path pathToTheCopyOfTheImage = Path.of("src\\copyOfTheImage.jpg");
+        Path targetPath = Path.of("src\\yourPictureCopy.jpg");
 
         //When
-        WorkWithStreams.copyImage(pathToImage, pathToTheCopyOfTheImage);
+        WorkWithStreams.copyImage(pathToImage, targetPath);
 
         //Then
-        assertTrue(Files.exists(pathToTheCopyOfTheImage));
+        assertTrue(Files.exists(targetPath.getFileName()));
     }
 
     @Test
@@ -59,6 +66,6 @@ class WorkWithStreamsTest {
         int counter = WorkWithStreams.countTheSyllables(pathToEnglishText);
 
         //Then
-        assertEquals(33, counter);
+        assertEquals(44, counter);
     }
 }

@@ -3,24 +3,18 @@ package com.naidiuk;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class WorkWithStreams {
 
     public static int countTheNumberOfChars(Path path) {
         int charsCounter = 0;
-        try (InputStream streamFromFile = Files.newInputStream(path);
-             InputStreamReader readStreamFromFile = new InputStreamReader(streamFromFile);
-             BufferedReader streamFromBuffer = new BufferedReader(readStreamFromFile))
+        try (InputStream fromFile = Files.newInputStream(path);
+             InputStreamReader reading = new InputStreamReader(fromFile);
+             BufferedReader buffer = new BufferedReader(reading))
         {
-            StringBuilder fileContents = new StringBuilder();
-            while (streamFromBuffer.ready()) {
-                fileContents.append(streamFromBuffer.readLine());
-            }
-            char[] chars = fileContents.toString().toCharArray();
-            for (char aChar : chars) {
-                charsCounter++;
+            while (buffer.ready()) {
+                String fileContents = buffer.readLine();
+                charsCounter += fileContents.length();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -30,18 +24,14 @@ public class WorkWithStreams {
 
     public static int countTheWords(Path path) {
         int wordsCounter = 0;
-        try (InputStream streamFromFile = Files.newInputStream(path);
-             InputStreamReader readStreamFromFile = new InputStreamReader(streamFromFile);
-             BufferedReader streamFromBuffer = new BufferedReader(readStreamFromFile))
+        try (InputStream fromFile = Files.newInputStream(path);
+             InputStreamReader reading = new InputStreamReader(fromFile);
+             BufferedReader buffer = new BufferedReader(reading))
         {
-            while (streamFromBuffer.ready()) {
-                String fileContents = streamFromBuffer.readLine();
+            while (buffer.ready()) {
+                String fileContents = buffer.readLine();
                 String[] words = fileContents.split("\\s");
-                for (String word : words) {
-                    if (!"-".equals(word)) {
-                        wordsCounter++;
-                    }
-                }
+                wordsCounter += words.length;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,13 +41,21 @@ public class WorkWithStreams {
 
     public static int countTheSentences(Path path) {
         int sentencesCounter = 0;
-        try (InputStream streamFromFile = Files.newInputStream(path);
-             InputStreamReader readStreamFromFile = new InputStreamReader(streamFromFile);
-             BufferedReader streamFromBuffer = new BufferedReader(readStreamFromFile))
+        try (InputStream fromFile = Files.newInputStream(path);
+             InputStreamReader reading = new InputStreamReader(fromFile);
+             BufferedReader buffer = new BufferedReader(reading))
         {
-            while (streamFromBuffer.ready()) {
-                streamFromBuffer.readLine();
-                sentencesCounter++;
+            while (buffer.ready()) {
+                String fileContents = buffer.readLine();
+                char[] chars = fileContents.toCharArray();
+                for (char aChar : chars) {
+                    if (       aChar == '.'
+                            || aChar == '!'
+                            || aChar == '?')
+                    {
+                        sentencesCounter++;
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,17 +64,20 @@ public class WorkWithStreams {
     }
 
     public static void copyImage(Path sourcePath, Path targetPath) {
-        try (InputStream streamFromFile = Files.newInputStream(sourcePath)) {
-            if (Files.notExists(targetPath)) {
-                Files.createFile(targetPath);
+        Path absolute = targetPath.toAbsolutePath();
+        String filePath = absolute + "\\yourPictureCopy.jpg";
+        Path pathOfFile = Path.of(filePath);
+        try (InputStream fromFile = Files.newInputStream(sourcePath)) {
+            if (Files.notExists(pathOfFile)) {
+                Files.createFile(pathOfFile);
             }
-            try (OutputStream streamToFile = Files.newOutputStream(targetPath)) {
-                byte[] buffer = new byte[20480];
-                while (streamFromFile.available() > 0) {
-                    int real = streamFromFile.read(buffer);
-                    streamToFile.write(buffer, 0, real);
+            try (OutputStream toFile = Files.newOutputStream(pathOfFile)) {
+                byte[] buffer = new byte[65536];
+                while (fromFile.available() > 0) {
+                    int amountOfBytes = fromFile.read(buffer);
+                    toFile.write(buffer, 0, amountOfBytes);
                 }
-            } catch (IOException e) {
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         } catch (IOException e) {
@@ -84,29 +85,24 @@ public class WorkWithStreams {
         }
     }
 
-    public static int countTheSyllables(Path path) {
+        public static int countTheSyllables(Path path) {
         int syllablesCounter = 0;
-        try (InputStream streamFromFile = Files.newInputStream(path);
-             InputStreamReader readStreamFromFile = new InputStreamReader(streamFromFile);
-             BufferedReader streamFromBuffer = new BufferedReader(readStreamFromFile))
+        try (InputStream fromFile = Files.newInputStream(path);
+             InputStreamReader reading = new InputStreamReader(fromFile);
+             BufferedReader buffer = new BufferedReader(reading))
         {
-            while (streamFromBuffer.ready()) {
-                String fileContents = streamFromBuffer.readLine();
-                String[] words = fileContents.split("\\W+");
-                Pattern syllables = Pattern.compile("[aeiouy]+", Pattern.CASE_INSENSITIVE);
-                for (String word : words) {
-                    Matcher matcher = syllables.matcher(word);
-                    while (matcher.find()) {
+            while (buffer.ready()) {
+                String fileContents = buffer.readLine();
+                char[] chars = fileContents.toCharArray();
+                for (char aChar : chars) {
+                    if (       aChar == 'a'
+                            || aChar == 'e'
+                            || aChar == 'i'
+                            || aChar == 'o'
+                            || aChar == 'u'
+                            || aChar == 'y')
+                    {
                         syllablesCounter++;
-                    }
-                    if (word.length() > 2) {
-                        String wordEndings = word.substring(word.length() - 2);
-                        System.out.println(wordEndings);
-                        Pattern ending = Pattern.compile("[klnrst]e");
-                        Matcher m = ending.matcher(wordEndings);
-                        while (m.find()) {
-                            syllablesCounter--;
-                        }
                     }
                 }
             }
