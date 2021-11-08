@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class WorkWithStreamsTest {
 
-    private final Path path = Path.of("C:\\Users\\olegn\\Desktop\\Test.txt");
+    private final Path path = Path.of("src\\Test.txt");
 
     @Test
     void testCountTheNumberOfChars() {
@@ -40,13 +40,25 @@ class WorkWithStreamsTest {
     @Test
     void testCopyImage() {
         //Prepare
-        Path pathToImage = Path.of("D:\\Downloads\\Обои\\LWlRSlZDWoE.jpg");
-        Path pathToTheCopyOfTheImage = Path.of("C:\\Users\\olegn\\Desktop\\copyOfTheImage.jpg");
+        Path pathToImage = Path.of("src\\LWlRSlZDWoE.jpg");
+        Path pathToTheCopyOfTheImage = Path.of("src\\copyOfTheImage.jpg");
 
         //When
         WorkWithStreams.copyImage(pathToImage, pathToTheCopyOfTheImage);
 
         //Then
         assertTrue(Files.exists(pathToTheCopyOfTheImage));
+    }
+
+    @Test
+    void testCountTheSyllables() {
+        //Prepare
+        Path pathToEnglishText = Path.of("src\\English text.txt");
+
+        //When
+        int counter = WorkWithStreams.countTheSyllables(pathToEnglishText);
+
+        //Then
+        assertEquals(33, counter);
     }
 }
