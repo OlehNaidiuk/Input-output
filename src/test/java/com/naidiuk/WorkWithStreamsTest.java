@@ -48,7 +48,7 @@ class WorkWithStreamsTest {
     void testCopyImage() {
         //Prepare
         Path pathToImage = Path.of("src\\LWlRSlZDWoE.jpg");
-        Path targetPath = Path.of("src\\yourPictureCopy.jpg");
+        Path targetPath = Path.of("src\\");
 
         //When
         WorkWithStreams.copyImage(pathToImage, targetPath);

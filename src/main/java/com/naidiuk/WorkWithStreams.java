@@ -17,7 +17,7 @@ public class WorkWithStreams {
                 charsCounter += fileContents.length();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Operation not possible!");
         }
         return charsCounter;
     }
@@ -34,7 +34,7 @@ public class WorkWithStreams {
                 wordsCounter += words.length;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Operation not possible!");
         }
         return wordsCounter;
     }
@@ -49,16 +49,13 @@ public class WorkWithStreams {
                 String fileContents = buffer.readLine();
                 char[] chars = fileContents.toCharArray();
                 for (char aChar : chars) {
-                    if (       aChar == '.'
-                            || aChar == '!'
-                            || aChar == '?')
-                    {
+                    if (aChar == '.' || aChar == '!' || aChar == '?') {
                         sentencesCounter++;
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Operation not possible!");
         }
         return sentencesCounter;
     }
@@ -67,25 +64,28 @@ public class WorkWithStreams {
         Path absolute = targetPath.toAbsolutePath();
         String filePath = absolute + "\\yourPictureCopy.jpg";
         Path pathOfFile = Path.of(filePath);
-        try (InputStream fromFile = Files.newInputStream(sourcePath)) {
-            if (Files.notExists(pathOfFile)) {
+        if (Files.notExists(pathOfFile)) {
+            try {
                 Files.createFile(pathOfFile);
             }
-            try (OutputStream toFile = Files.newOutputStream(pathOfFile)) {
-                byte[] buffer = new byte[65536];
-                while (fromFile.available() > 0) {
-                    int amountOfBytes = fromFile.read(buffer);
-                    toFile.write(buffer, 0, amountOfBytes);
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+             catch (IOException e) {
+                throw new RuntimeException("Not enough disk space!");
+            }
+        }
+        try (InputStream fromFile = Files.newInputStream(sourcePath);
+             OutputStream toFile = Files.newOutputStream(pathOfFile))
+        {
+            byte[] buffer = new byte[65536];
+            while (fromFile.available() > 0) {
+                int amountOfBytes = fromFile.read(buffer);
+                toFile.write(buffer, 0, amountOfBytes);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Operation not possible!");
         }
     }
 
-        public static int countTheSyllables(Path path) {
+    public static int countTheSyllables(Path path) {
         int syllablesCounter = 0;
         try (InputStream fromFile = Files.newInputStream(path);
              InputStreamReader reading = new InputStreamReader(fromFile);
@@ -95,19 +95,13 @@ public class WorkWithStreams {
                 String fileContents = buffer.readLine();
                 char[] chars = fileContents.toCharArray();
                 for (char aChar : chars) {
-                    if (       aChar == 'a'
-                            || aChar == 'e'
-                            || aChar == 'i'
-                            || aChar == 'o'
-                            || aChar == 'u'
-                            || aChar == 'y')
-                    {
+                    if (aChar == 'a' || aChar == 'e' || aChar == 'i' || aChar == 'o' || aChar == 'u' || aChar == 'y') {
                         syllablesCounter++;
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Operation not possible!");
         }
         return syllablesCounter;
     }
